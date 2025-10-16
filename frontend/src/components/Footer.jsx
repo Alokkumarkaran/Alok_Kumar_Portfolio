@@ -9,7 +9,7 @@ export default function Footer() {
         {/* Copyright */}
         <div className="text-center md:text-left text-sm md:text-base">
           © {new Date().getFullYear()}{" "}
-          <span className="font-semibold">@alokkumarkaranraj</span>
+          <span className="font-semibold">alokkumarkaranraj@gmail.com</span>
         </div>
 
         {/* Social Icons */}
