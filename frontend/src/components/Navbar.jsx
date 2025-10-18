@@ -27,7 +27,7 @@ export default function Navbar() {
       <div className="w-full px-6 md:px-10 lg:px-16 flex justify-between items-center py-4">
         {/* Brand / Logo */}
         <a
-          href="#home"
+          href="home"
           className="text-2xl font-extrabold bg-gradient-to-r from-cyan-400 to-violet-500 text-transparent bg-clip-text tracking-wide"
         >
           {profile.name}
@@ -36,16 +36,22 @@ export default function Navbar() {
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-8 text-gray-700 dark:text-gray-200 font-medium">
           <a
-            href="#projects"
+            href="#about"
             className="hover:text-cyan-500 transition-colors duration-200"
           >
-            Projects
+            About Me
           </a>
-          <a
+           <a
             href="#skills"
             className="hover:text-cyan-500 transition-colors duration-200"
           >
             Skills
+          </a>
+          <a
+            href="#projects"
+            className="hover:text-cyan-500 transition-colors duration-200"
+          >
+            Projects
           </a>
           <a
             href="#ai"
@@ -97,11 +103,11 @@ export default function Navbar() {
           >
             <div className="flex flex-col space-y-4 p-6 text-gray-700 dark:text-gray-200 font-medium">
               <a
-                href="#projects"
+                href="#about"
                 onClick={() => setMenuOpen(false)}
                 className="hover:text-cyan-500 transition-colors duration-200"
               >
-                Projects
+                About Me
               </a>
               <a
                 href="#skills"
@@ -110,6 +116,14 @@ export default function Navbar() {
               >
                 Skills
               </a>
+              <a
+                href="#projects"
+                onClick={() => setMenuOpen(false)}
+                className="hover:text-cyan-500 transition-colors duration-200"
+              >
+                Projects
+              </a>
+ 
               <a
                 href="#ai"
                 onClick={() => setMenuOpen(false)}

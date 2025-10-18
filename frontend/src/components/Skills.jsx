@@ -17,6 +17,7 @@ const skills = [
   { name: "FastAPI", level: 68 },
   { name: "Git & GitHub", level: 87 },
   { name: "RESTful APIs", level: 84 },
+  { name: "Figma", level: 89 },
   { name: "Docker (Basic)", level: 60 },
 ];
 

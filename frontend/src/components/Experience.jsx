@@ -30,9 +30,9 @@ export default function Experience() {
       duration: "Aug 2024 - Dec 2024",
       type: "Project",
       tech: ["React.js", "Node.js", "Express.js", "MongoDB"],
-      image: "/images/cu-project-cert.png",
+      image: "/Skill-Swap.jpg",
       details:
-        "Built 'Skill Swap Platform', a MERN-based e-learning and peer-to-peer skill exchange system featuring OTP verification, role-based access, and secure payment integration.",
+        "Built 'Skill-Swap E-Learning Platform', a MERN-based e-learning and peer-to-peer skill exchange system featuring OTP verification, role-based access, and secure payment integration.",
     },
   ];
 

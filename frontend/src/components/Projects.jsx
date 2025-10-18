@@ -35,6 +35,15 @@ const projects = [
     live: "https://realtimechat.vercel.app",
   },
   {
+  title: "Alok Kumar Portfolio",
+  desc: "Personal portfolio website showcasing my skills, projects, certifications, and professional experience. Built with React.js and modern responsive design principles for a sleek and interactive user experience.",
+  tech: ["React.js", "Node.js", "Tailwind CSS", "Framer Motion", "Vercel"],
+  image: "/Portfoliopic.png",
+  github: "https://github.com/Alokkumarkaran/Alok_Kumar_Portfolio",
+  live: "https://alokkumarkaran.vercel.app",
+},
+
+  {
     title: "Airline Reservation System (SQL Project)",
     desc: "Database system designed with MySQL to manage flight bookings, passengers, and transactions with optimized queries and stored procedures.",
     tech: ["SQL", "MySQL", "Excel"],

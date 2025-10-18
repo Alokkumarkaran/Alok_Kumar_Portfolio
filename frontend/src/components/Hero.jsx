@@ -1,122 +1,162 @@
 import React, { useEffect, useState } from "react";
-import { motion, useAnimation } from "framer-motion";
+import { motion } from "framer-motion";
 import Typewriter from "typewriter-effect";
 import { FiGithub, FiLinkedin, FiMail } from "react-icons/fi";
-import { profile } from "../data/profile";
 
 export default function Hero() {
-  const controls = useAnimation();
-  const [offsetY, setOffsetY] = useState(0);
+  const [greeting, setGreeting] = useState("");
+  const [gradient, setGradient] = useState("from-cyan-400 to-violet-500");
 
-  // Parallax scroll effect
   useEffect(() => {
-    const handleScroll = () => {
-      setOffsetY(window.scrollY * 0.2);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const hour = new Date().getHours();
+    if (hour < 12) {
+      setGreeting("Good Morning 🌅");
+      setGradient("from-amber-300 to-orange-500");
+    } else if (hour < 17) {
+      setGreeting("Good Afternoon ☀️");
+      setGradient("from-sky-400 to-cyan-500");
+    } else if (hour < 20) {
+      setGreeting("Good Evening 🌇");
+      setGradient("from-purple-400 to-pink-500");
+    } else {
+      setGreeting("Good Night 🌙");
+      setGradient("from-indigo-500 to-blue-800");
+    }
   }, []);
 
   return (
-    <section className="relative w-full min-h-screen bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center overflow-x-hidden">
-      <div className="max-w-7xl mx-auto px-6 flex flex-col-reverse md:flex-row items-center gap-8 w-full">
+    <section className="relative w-screen min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pt-24 md:pt-32">
+      {/* ==== Animated Floating Background ==== */}
+      <motion.div
+        className="absolute w-96 h-96 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full blur-3xl opacity-25 top-10 left-10 animate-pulse"
+        animate={{ y: [0, -20, 0] }}
+        transition={{ duration: 6, repeat: Infinity }}
+      />
+      <motion.div
+        className="absolute w-[400px] h-[400px] bg-gradient-to-r from-pink-500 to-purple-500 rounded-full blur-3xl opacity-25 bottom-10 right-10 animate-pulse"
+        animate={{ y: [0, 20, 0] }}
+        transition={{ duration: 8, repeat: Infinity }}
+      />
 
-        {/* ===== Left Content ===== */}
-        <div className="flex-1 text-center md:text-left z-10">
-          <h1 className="text-4xl md:text-6xl font-extrabold mb-4 text-gray-900 dark:text-white">
-            Hi, I'm {profile.name}
-          </h1>
+      {/* ==== Main Container ==== */}
+      <div className="w-full flex flex-col md:flex-row items-center justify-between px-6 md:px-16 lg:px-24 xl:px-32 gap-10 relative z-10">
+        {/* ==== Left Content ==== */}
+        <div className="flex-1 text-center md:text-left">
+          {/* Greeting Bubble */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: -10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 1 }}
+            className="inline-block mb-5 px-8 py-3 rounded-full backdrop-blur-md bg-white/30 dark:bg-gray-800/30 border border-gray-300/40 dark:border-gray-600/40 shadow-lg"
+          >
+            <h3
+              className={`text-lg md:text-xl font-semibold bg-gradient-to-r ${gradient} bg-clip-text text-transparent animate-gradient-x`}
+            >
+              {greeting}
+            </h3>
+          </motion.div>
 
-          <h2 className="text-xl md:text-2xl font-medium mb-4 text-gray-700 dark:text-gray-300">
-            Software Developer | Data Analyst
-          </h2>
+          {/* Name */}
+          <motion.h1
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2 }}
+            className="text-5xl md:text-7xl font-extrabold mb-3 text-gray-900 dark:text-white"
+          >
+            Hi, I’m{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500 animate-gradient-x">
+              Alok Kumar
+            </span>
+          </motion.h1>
 
-          <div className="text-lg mb-6 text-gray-600 dark:text-gray-400">
+          {/* Title */}
+          <motion.h2
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="text-xl md:text-3xl font-medium text-gray-700 dark:text-gray-300 mb-6"
+          >
+            Software Developer | Data Analyst | Tech Enthusiast
+          </motion.h2>
+
+          {/* Professional Summary */}
+          
+
+          {/* Typewriter */}
+          <div className="text-lg mb-6 text-gray-700 dark:text-gray-300">
             <Typewriter
               options={{
                 strings: [
-                  "MERN Stack & FastAPI Developer",
-                  "Data Analyst (SQL, Python, Power BI)",
-                  "Building Scalable Web Apps",
-                  "Turning Data into Insights",
-                  "Open to New Opportunities ",
+                  "MERN Stack & FastAPI Developer", "Data Analyst (SQL, Python, Power BI)", "Building Scalable Web Apps", "Turning Data into Insights", "Open to New Opportunities ",
                 ],
                 autoStart: true,
                 loop: true,
-                delay: 70,
+                delay: 75,
               }}
             />
           </div>
 
-          {/* === CTA Buttons === */}
-          <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-4 mb-6">
+          {/* Buttons */}
+          <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-4 mt-8">
             <a
               href="#contact"
-              className="px-6 py-3 rounded-lg bg-gradient-to-r from-cyan-400 to-violet-500 text-white font-semibold hover:scale-105 transition-transform duration-300 shadow-md"
+              className="px-8 py-3 rounded-full bg-gradient-to-r from-cyan-400 to-violet-500 text-white font-semibold hover:shadow-lg hover:scale-105 transition-transform duration-300"
             >
-              Hire Me
+              Let’s Connect
             </a>
             <a
               href="/Alok_Kumar_resume.pdf"
-              className="px-6 py-3 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white hover:scale-105 transition-transform duration-300"
+              className="px-8 py-3 rounded-full border border-gray-400 dark:border-gray-600 text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300"
             >
               Download CV
             </a>
           </div>
 
-          {/* === Social Icons === */}
-          <div className="flex justify-center md:justify-start gap-6 mt-4">
+          {/* Social Icons */}
+          <div className="flex justify-center md:justify-start gap-6 mt-8">
             <motion.a
               href="https://github.com/Alokkumarkaran"
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ scale: 1.2 }}
-              whileTap={{ scale: 0.95 }}
-              className="text-gray-700 dark:text-gray-300 hover:text-cyan-400 transition-all"
+              className="text-gray-700 dark:text-gray-300 hover:text-cyan-400"
             >
               <FiGithub size={28} />
             </motion.a>
-
             <motion.a
               href="https://www.linkedin.com/in/alok-kumar-karan/"
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ scale: 1.2 }}
-              whileTap={{ scale: 0.95 }}
-              className="text-gray-700 dark:text-gray-300 hover:text-violet-400 transition-all"
+              className="text-gray-700 dark:text-gray-300 hover:text-violet-400"
             >
               <FiLinkedin size={28} />
             </motion.a>
-
             <motion.a
               href="mailto:alokkumarkaranraj@gmail.com"
               whileHover={{ scale: 1.2 }}
-              whileTap={{ scale: 0.95 }}
-              className="text-gray-700 dark:text-gray-300 hover:text-cyan-400 transition-all"
+              className="text-gray-700 dark:text-gray-300 hover:text-cyan-400"
             >
               <FiMail size={28} />
             </motion.a>
           </div>
         </div>
 
-        {/* ===== Right Image Section ===== */}
-        <div className="flex-1 flex justify-center md:justify-end items-center relative">
-          {/* Background Glow */}
-          <div className="absolute w-80 h-80 md:w-[500px] md:h-[500px] rounded-full bg-gradient-to-tr from-cyan-300 to-violet-400 blur-3xl opacity-30 animate-pulse" />
-
-          {/* Floating Profile Image */}
+        {/* ==== Right Image ==== */}
+        <div className="flex-1 flex justify-center items-center relative">
+          <motion.div
+            className="absolute w-[500px] h-[500px] bg-gradient-to-r from-cyan-400 to-violet-500 rounded-full blur-3xl opacity-30 animate-pulse"
+            animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
+            transition={{ duration: 6, repeat: Infinity }}
+          />
           <motion.img
             src="/Alok_Kumar.png"
-            alt={profile.name}
-            className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-[500px] md:h-[500px] object-contain rounded-full shadow-2xl cursor-pointer"
+            alt="Alok Kumar"
+            className="relative w-72 h-72 sm:w-96 sm:h-96 md:w-[500px] md:h-[500px] object-contain rounded-full shadow-2xl"
             animate={{ y: [0, -15, 0] }}
-            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-            style={{ y: offsetY }}
+            transition={{ duration: 5, repeat: Infinity }}
             whileHover={{ scale: 1.05, rotate: 2 }}
           />
-
-          {/* Soft Overlay */}
-          <div className="absolute w-80 h-80 md:w-[500px] md:h-[500px] rounded-full bg-white/20 dark:bg-gray-900/20 blur-2xl pointer-events-none" />
         </div>
       </div>
     </section>
