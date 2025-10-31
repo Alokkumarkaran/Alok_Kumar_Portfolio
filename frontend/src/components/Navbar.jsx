@@ -60,6 +60,12 @@ export default function Navbar() {
             AI Resume
           </a>
           <a
+            href="#blog"
+            className="hover:text-cyan-500 transition-colors duration-200"
+          >
+            My Blog
+          </a>
+          <a
             href="#contact"
             className="hover:text-cyan-500 transition-colors duration-200"
           >
@@ -130,6 +136,13 @@ export default function Navbar() {
                 className="hover:text-cyan-500 transition-colors duration-200"
               >
                 AI Resume
+              </a>
+              <a
+                href="#blog"
+                onClick={() => setMenuOpen(false)}
+                className="hover:text-cyan-500 transition-colors duration-200"
+              >
+                My Blog
               </a>
               <a
                 href="#contact"

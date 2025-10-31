@@ -143,21 +143,46 @@ export default function Hero() {
         </div>
 
         {/* ==== Right Image ==== */}
-        <div className="flex-1 flex justify-center items-center relative">
-          <motion.div
-            className="absolute w-[500px] h-[500px] bg-gradient-to-r from-cyan-400 to-violet-500 rounded-full blur-3xl opacity-30 animate-pulse"
-            animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
-            transition={{ duration: 6, repeat: Infinity }}
-          />
-          <motion.img
-            src="/Alok_Kumar.png"
-            alt="Alok Kumar"
-            className="relative w-72 h-72 sm:w-96 sm:h-96 md:w-[500px] md:h-[500px] object-contain rounded-full shadow-2xl"
-            animate={{ y: [0, -15, 0] }}
-            transition={{ duration: 5, repeat: Infinity }}
-            whileHover={{ scale: 1.05, rotate: 2 }}
-          />
-        </div>
+        {/* ==== Right Image (Enhanced with Rotating Orbit) ==== */}
+<div className="flex-1 flex justify-center items-center relative">
+  {/* Soft Gradient Background Glow */}
+  <motion.div
+    className="absolute w-[520px] h-[520px] bg-gradient-to-tr from-cyan-400 via-blue-500 to-violet-600 
+               rounded-full blur-3xl opacity-25 animate-pulse"
+    animate={{ scale: [1, 1.1, 1], opacity: [0.2, 0.35, 0.2] }}
+    transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+  />
+
+  {/* Rotating Orbit Ring */}
+  <motion.div
+    className="absolute w-[480px] h-[480px] rounded-full border-t-[6px] border-b-[6px] border-gradient-to-r 
+               from-cyan-400 via-blue-400 to-violet-500 blur-sm"
+    style={{
+      borderImage: "linear-gradient(to right, #22d3ee, #3b82f6, #8b5cf6) 1",
+    }}
+    animate={{ rotate: 360 }}
+    transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+  />
+
+  {/* Inner Pulsing Halo */}
+  <motion.div
+    className="absolute w-[400px] h-[400px] rounded-full bg-gradient-to-tr 
+               from-cyan-400/20 via-blue-400/10 to-violet-500/20 blur-2xl"
+    animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
+    transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+  />
+
+  {/* Profile Image with Floating Effect */}
+  <motion.img
+    src="/Alok_Kumar.png"
+    alt="Alok Kumar"
+    className="relative w-72 h-72 sm:w-96 sm:h-96 md:w-[480px] md:h-[480px] object-cover rounded-full shadow-2xl ring-4 ring-white/30 dark:ring-gray-700/50"
+    animate={{ y: [0, -15, 0] }}
+    transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+    whileHover={{ scale: 1.05, rotate: 2 }}
+  />
+</div>
+
       </div>
     </section>
   );
