@@ -175,7 +175,7 @@ export default function Hero() {
   {/* Profile Image with Floating Effect */}
   <motion.img
     src="/Alok_Kumar.png"
-    alt="Alok Kumar"
+    alt="Alok Kumar — Full Stack Developer and Data Analyst alokkumarkaranraj"
     className="relative w-72 h-72 sm:w-96 sm:h-96 md:w-[480px] md:h-[480px] object-cover rounded-full shadow-2xl ring-4 ring-white/30 dark:ring-gray-700/50"
     animate={{ y: [0, -15, 0] }}
     transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}

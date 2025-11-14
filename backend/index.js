@@ -4,45 +4,105 @@ const cors = require('cors');
 const multer = require('multer');
 const fs = require('fs');
 const pdfParse = require('pdf-parse');
-const { Configuration, OpenAIApi } = require('openai');
-const contactRouter = require('./contact');  // <-- import the router
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+const OpenAI = require('openai');
+const contactRouter = require('./contact');
 
-// 1️⃣ Initialize Express app
 const app = express();
-
-// 2️⃣ Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const upload = multer({ dest: 'uploads/' });
 
-// 3️⃣ OpenAI setup
+// === AI CONFIGURATION ===
 const OPENAI_KEY = process.env.OPENAI_API_KEY || '';
-let openai = null;
-if (OPENAI_KEY) {
-  const configuration = new Configuration({ apiKey: OPENAI_KEY });
-  openai = new OpenAIApi(configuration);
-}
+const GEMINI_KEY = process.env.GOOGLE_API_KEY || '';
 
-// 4️⃣ Helper functions
+let openai = null;
+let gemini = null;
+
+if (OPENAI_KEY) openai = new OpenAI({ apiKey: OPENAI_KEY });
+if (GEMINI_KEY) gemini = new GoogleGenerativeAI(GEMINI_KEY);
+
+// === Helper functions ===
 function countWords(str) {
   return str.split(/\s+/).filter(Boolean).length;
 }
 
 function simpleScore(text) {
-  const keywords = ['react','node','express','python','docker','sql','mongodb','aws','spark','power bi','tableau'];
-  const kMatches = keywords.reduce((acc, k) => acc + (text.toLowerCase().includes(k) ? 1 : 0), 0);
-  const actions = ['led','built','designed','developed','implemented','optimized','improved'];
-  const aMatches = actions.reduce((acc, a) => acc + (text.toLowerCase().includes(a) ? 1 : 0), 0);
-  const lenScore = Math.min(30, Math.floor(countWords(text) / 20));
-  const score = Math.min(95, 40 + kMatches*6 + aMatches*5 + lenScore);
-  return { score, highlights: `${kMatches} tech keywords found, ${aMatches} action verbs`, suggestions: 'Add quantified achievements and tailor to job description' };
+  const lower = text.toLowerCase();
+
+  // === Keyword Libraries ===
+  const devKeywords = [
+    'javascript','typescript','react','next.js','vue','angular','node','express','java',
+    'spring','c#','dotnet','django','flask','python','php','laravel','git','docker',
+    'kubernetes','aws','azure','gcp','rest api','graphql','microservices','html','css','sass'
+  ];
+
+  const dataKeywords = [
+    'sql','mysql','postgresql','mongodb','power bi','tableau','excel','pandas','numpy','matplotlib',
+    'seaborn','data analysis','data visualization','data cleaning','data preprocessing','statistics',
+    'machine learning','deep learning','tensorflow','pytorch','spark','hadoop'
+  ];
+
+  const actionVerbs = [
+    'led','built','designed','developed','implemented','optimized','improved','analyzed',
+    'created','enhanced','automated','managed','collaborated','architected','maintained',
+    'deployed','debugged','tested','configured','delivered','mentored'
+  ];
+
+  // === Match Counting ===
+  const devMatches = devKeywords.filter(k => lower.includes(k)).length;
+  const dataMatches = dataKeywords.filter(k => lower.includes(k)).length;
+  const actionMatches = actionVerbs.filter(a => lower.includes(a)).length;
+  const wordCount = countWords(text);
+
+  // === Scoring Logic ===
+  const techScore = Math.min(35, devMatches * 2 + dataMatches * 2);
+  const actionScore = Math.min(25, actionMatches * 2);
+  const lengthScore = Math.min(30, Math.floor(wordCount / 40)); // ideal resumes are 600–1000 words
+  let totalScore = techScore + actionScore + lengthScore;
+
+  // Normalize if resume has little content
+  if (wordCount < 100) totalScore *= 0.6;
+  if (wordCount < 50) totalScore *= 0.4;
+
+  const score = Math.round(Math.min(100, totalScore));
+
+  // === Generate Highlights & Suggestions ===
+  const highlights = [
+    `${devMatches} software keywords found`,
+    `${dataMatches} data-related keywords`,
+    `${actionMatches} action verbs`,
+    `Approx. ${wordCount} words total`
+  ].join(', ');
+
+  const suggestions = [];
+  if (devMatches < 5) suggestions.push("Add more technical stack keywords (e.g., React, Node, Docker, AWS).");
+  if (dataMatches < 3) suggestions.push("Include more data/analytics tools if relevant (e.g., SQL, Power BI, Python).");
+  if (actionMatches < 4) suggestions.push("Use more action verbs like 'developed', 'optimized', or 'implemented'.");
+  if (wordCount < 200) suggestions.push("Add more detail — resumes under 200 words may look too brief.");
+  if (wordCount > 1200) suggestions.push("Consider trimming — keep your resume concise (under 2 pages).");
+  if (suggestions.length === 0) suggestions.push("Your resume is well-balanced and detailed — great job!");
+
+  return {
+    score,
+    breakdown: {
+      technical: Math.min(100, Math.round((techScore / 35) * 100)),
+      action: Math.min(100, Math.round((actionScore / 25) * 100)),
+      completeness: Math.min(100, Math.round((lengthScore / 30) * 100))
+    },
+    highlights,
+    suggestions: suggestions.join(' ')
+  };
 }
 
-// 5️⃣ Resume analysis route
+
+// === Resume Analyzer ===
 app.post('/api/analyze-resume', upload.single('file'), async (req, res) => {
-  if(!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+
   try {
     const buffer = fs.readFileSync(req.file.path);
     let text = '';
@@ -50,36 +110,93 @@ app.post('/api/analyze-resume', upload.single('file'), async (req, res) => {
     try {
       const data = await pdfParse(buffer);
       text = data.text || '';
-    } catch(e) {
+    } catch (e) {
       text = buffer.toString('utf-8');
     }
 
-    if(openai){
-      const prompt = `You are an expert resume reviewer. Give a JSON response with keys: score (0-100), highlights (short), suggestions (short). Resume text:\n${text}`;
-      const response = await openai.createCompletion({ model: 'text-davinci-003', prompt, max_tokens: 300 });
-      const out = response.data.choices[0].text.trim();
+    let analysis = null;
+
+    // Try Gemini first
+    if (gemini) {
       try {
-        const parsed = JSON.parse(out);
-        return res.json(parsed);
-      } catch(err) {
-        // fallback to simple scorer
+    const model = gemini.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const prompt = `
+You are an expert technical resume reviewer and career coach.
+Analyze the following resume text in depth and respond ONLY in strict JSON format matching this schema:
+
+{
+  "score": number (0-100),
+  "overall_summary": string,
+  "key_strengths": [string],
+  "improvement_areas": [string],
+  "technical_skills_detected": [string],
+  "soft_skills_detected": [string],
+  "experience_level": "Beginner" | "Intermediate" | "Advanced" | "Expert",
+  "recommendations": [string],
+  "section_scores": {
+    "Technical Skills": number,
+    "Experience": number,
+    "Projects": number,
+    "Education": number,
+    "Soft Skills": number
+  },
+  "graph_insights": {
+    "skill_match_percent": number,
+    "action_verb_usage": number,
+    "content_density": number
+  }
+}
+
+Resume Text:
+${text}
+
+Be analytical, structured, and insightful. Focus on measurable details and professional presentation.
+    `;
+
+    const result = await model.generateContent(prompt);
+    const output = result.response.text().trim();
+
+    analysis = JSON.parse(output);
+  } catch (err) {
+    console.warn('⚠️ Gemini failed, falling back to OpenAI or simple scoring.', err.message);
       }
     }
 
-    const result = simpleScore(text);
-    return res.json(result);
+    // Fallback to OpenAI
+    if (!analysis && openai) {
+      try {
+        const prompt = `You are an expert resume reviewer. Return JSON with:
+          "score" (0-100), "highlights", and "suggestions". Resume text:\n${text}`;
+        const response = await openai.chat.completions.create({
+          model: 'gpt-4o-mini',
+          messages: [{ role: 'user', content: prompt }],
+          max_tokens: 300,
+        });
+        const out = response.choices[0].message.content.trim();
+        analysis = JSON.parse(out);
+      } catch (err) {
+        console.warn('⚠️ OpenAI failed, using simple scoring.');
+      }
+    }
 
-  } catch(err) {
+    // Fallback to simple scoring
+    if (!analysis) {
+      analysis = simpleScore(text);
+    }
+
+    return res.json(analysis);
+
+  } catch (err) {
     console.error(err);
     return res.status(500).json({ error: 'Analysis failed' });
   } finally {
-    if(req.file && req.file.path) fs.unlink(req.file.path, ()=>{});
+    if (req.file && req.file.path) fs.unlink(req.file.path, () => {});
   }
 });
 
-// 6️⃣ Contact form route
+// === Contact route ===
 app.use('/api/contact', contactRouter);
 
-// 7️⃣ Start server
+// === Start server ===
 const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => console.log(`Resume analyzer backend running on port ${PORT}`));
+app.listen(PORT, () => console.log(`✅ Resume analyzer backend running on port ${PORT}`));
