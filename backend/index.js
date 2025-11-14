@@ -9,7 +9,11 @@ const OpenAI = require('openai');
 const contactRouter = require('./contact');
 
 const app = express();
-app.use(cors());
+
+// Configure CORS to allow requests from your deployed frontend (recommended)
+// Set FRONTEND_URL in your Render service environment variables to your Vercel URL
+const FRONTEND_URL = process.env.FRONTEND_URL || 'https://alokkumarkaran.vercel.app';
+app.use(cors({ origin: FRONTEND_URL, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

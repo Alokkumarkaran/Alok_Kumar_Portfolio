@@ -14,6 +14,8 @@ import {
 import { motion } from "framer-motion";
 
 export default function Contact() {
+  // Use Vite environment variable for backend base URL in production (set VITE_API_URL in Vercel)
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -37,7 +39,7 @@ export default function Contact() {
     try {
       setLoading(true);
       setSent(false);
-      const res = await axios.post("http://localhost:8000/api/contact/send", data, {
+      const res = await axios.post(`${API_BASE}/api/contact/send`, data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -58,7 +60,7 @@ export default function Contact() {
       setSent(true);
     } catch (err) {
       console.error(err);
-      toast.error("Failed to send message ❌", {
+      toast.error(`Failed to send message ❌ — ${API_BASE}`, {
         position: "top-center",
         autoClose: 3000,
         theme: "colored",

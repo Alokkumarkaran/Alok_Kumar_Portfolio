@@ -4,6 +4,8 @@ import { FiUpload, FiCheckCircle, FiLoader } from "react-icons/fi";
 import { motion } from "framer-motion";
 
 export default function AIResume() {
+  // Use Vite environment variable for backend base URL in production (set VITE_API_URL in Vercel)
+  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
   const [file, setFile] = useState(null);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -15,12 +17,12 @@ export default function AIResume() {
     fd.append("file", file);
     setLoading(true);
     try {
-      const resp = await axios.post("http://localhost:8000/api/analyze-resume", fd, {
+      const resp = await axios.post(`${API_BASE}/api/analyze-resume`, fd, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       setResult(resp.data);
     } catch (err) {
-      alert("Could not analyze. Make sure backend is running at http://localhost:8000");
+      alert(`Could not analyze. Make sure backend is running at ${API_BASE}`);
     } finally {
       setLoading(false);
     }
