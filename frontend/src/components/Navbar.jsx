@@ -27,8 +27,8 @@ export default function Navbar() {
       <div className="w-full px-6 md:px-10 lg:px-16 flex justify-between items-center py-4">
         {/* Brand / Logo */}
         <a
-          href="home"
-          className="text-2xl font-extrabold bg-gradient-to-r from-cyan-400 to-violet-500 text-transparent bg-clip-text tracking-wide"
+          href="#root"
+          className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-800 animate-gradient-x"
         >
           {profile.name}
         </a>

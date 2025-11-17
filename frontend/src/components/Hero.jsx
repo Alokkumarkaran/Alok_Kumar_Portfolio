@@ -64,9 +64,13 @@ export default function Hero() {
             className="text-5xl md:text-7xl font-extrabold mb-3 text-gray-900 dark:text-white"
           >
             Hi, I’m{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500 animate-gradient-x">
-              Alok Kumar
-            </span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-800 animate-gradient-x">
+  Alok Kumar
+</span>
+
+
+
+
           </motion.h1>
 
           {/* Title */}
