@@ -20,7 +20,7 @@ export default function Experience() {
       duration: "Feb 2025 - Apr 2025",
       type: "Internship",
       tech: ["React.js", "Node.js", "Express.js", "MongoDB"],
-      image: "/images/infosys-cert.png",
+      image: "/Infosys_Internship_Certificate_page-0001.jpg",
       details:
         "Developed a full-stack project titled 'Hire-A-Helper' — a service marketplace platform connecting customers and service providers. Implemented authentication, job listings, and responsive UI using React.js and Node.js.",
     },

@@ -8,6 +8,7 @@ import Skills from './components/Skills';
 import Education from './components/Education';
 import Experience from './components/Experience';
 import Certifications from './components/Certifications';
+import LinkedInBadge from './components/LinkedInBadge';
 import Blog from "./components/Blog";
 import About from './components/About';
 import Projects from './components/Projects';
@@ -56,8 +57,9 @@ export default function App() {
       <Education />
       <Experience />
       <Certifications />
-      <AIResume />
+      <LinkedInBadge />
       <GithubStats />
+      <AIResume />
       <Blog />
       <Contact />
       <Footer />
